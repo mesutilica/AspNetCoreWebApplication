@@ -1,0 +1,15 @@
+﻿@model List<Entites.News>
+
+<div class="container">
+    <div class="row text-center">
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4">
+                <img src="/Img/@item.Image" alt="@item.Name" class="bd-placeholder-img rounded-circle" width="140" height="140" />
+                <h2>@item.Name</h2>
+                <p>@item.Description</p>
+                <p><a class="btn btn-secondary" href="/News/Detail/@item.Id">Devamını Oku »</a></p>
+            </div>
+        }
+    </div>
+</div>
