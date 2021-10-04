@@ -21,6 +21,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Anasayfa</a>
                         </li>
+                        @await Component.InvokeAsync("Kategoriler") 
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="News" asp-action="Index">Haberler</a>
                         </li>

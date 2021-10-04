@@ -1,14 +1,10 @@
 using AspNetCoreWebApplication.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace AspNetCoreWebApplication
 {
@@ -29,6 +25,10 @@ namespace AspNetCoreWebApplication
             services.AddSession();
             services.AddDbContext<DatabaseContext>(); //projedeki 
             //services.AddDbContext<DataBaseContext>(); //DAL katmanýndaki
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(x =>
+            {
+                x.LoginPath = "/Admin/Login";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,7 +49,8 @@ namespace AspNetCoreWebApplication
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication();//Uygulamada oturum açma iþlemini aktif et. Dikkat! oturum iþleminde önce bu satýr sonra alttaki satýr gelmeli yoksa oturum açma iþlemi çalýþmaz!!!
+            app.UseAuthorization(); //Yetkilendirmeyi aktif et
 
             app.UseEndpoints(endpoints =>
             {

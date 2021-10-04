@@ -1,0 +1,18 @@
+﻿@model List<Entites.Post>
+
+<div class="container">
+    @*<h1>@Model.FirstOrDefault().Category.Name</h1>*@
+    <h1>@ViewBag.KategoriAdi</h1>
+    <hr />
+    <div class="row text-center">
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4">
+                <img src="/Img/@item.Image" alt="@item.Name" class="bd-placeholder-img rounded-circle" width="140" height="140" />
+                <h2>@item.Name</h2>
+                <p>@item.Description</p>
+                <p><a class="btn btn-secondary" href="/Posts/Detail/@item.Id">Devamını Oku »</a></p>
+            </div>
+        }
+    </div>
+</div>

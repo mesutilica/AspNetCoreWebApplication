@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +8,11 @@ using AspNetCoreWebApplication.Data;
 using Entites;
 using Microsoft.AspNetCore.Http;
 using AspNetCoreWebApplication.Utils;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AspNetCoreWebApplication.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"), Authorize]
     public class PostsController : Controller
     {
         private readonly DatabaseContext _context;

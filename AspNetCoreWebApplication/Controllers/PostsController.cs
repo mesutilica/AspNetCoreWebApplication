@@ -14,5 +14,20 @@ namespace AspNetCoreWebApplication.Controllers
         {
             return View(postManager.GetAll());
         }
+        public IActionResult Detail(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var post = postManager.Find(id.Value);
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            return View(post);
+        }
     }
 }
