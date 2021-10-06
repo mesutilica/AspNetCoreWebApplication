@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using BL;
 
 namespace AspNetCoreWebApplication
 {
@@ -29,6 +30,16 @@ namespace AspNetCoreWebApplication
             {
                 x.LoginPath = "/Admin/Login";
             });
+
+            //DI ile servis ekleme yöntemleri
+
+            //services.AddScoped();  Uygulama çalýþma zamanýnda her bir istek, iþlem veya hareket için üretilir. 
+
+            //services.AddSingleton(); >> Uygulama ayaða kalkarken çalýþan “ConfigureServices” metodunda bu metod ile tanýmladýðýnýz her sýnýftan sadece bir örnek oluþturulur. Her kim ve nereden çaðýrýrsa çaðýrsýn yalnýzca bu tek örnek kullanýlacaktýr. Uygulama yeniden baþlayýncaya kadar bir yenisi üretilmez. 
+
+            //services.AddTransient(); Uygulama çalýþma zamanýnda belirli koþullarda üretilir veya varolan örneði kullanýlýr. 
+
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>)); //Sana IRepository kullanma isteði gelirse, Repository sýnýfýndan bir nesne oluþtur ve onu gönder
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,8 +1,10 @@
 ﻿using BL;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace AspNetCoreWebApplication.Areas.Admin.Controllers
@@ -13,10 +15,11 @@ namespace AspNetCoreWebApplication.Areas.Admin.Controllers
         UserManager userManager = new UserManager();
         public IActionResult Index()
         {
+            TempData["ReturnUrl"] = HttpContext.Request.Query["ReturnUrl"];
             return View();
         }
         [HttpPost]
-        public IActionResult Index(string email, string password)
+        public async Task<IActionResult> IndexAsync(string email, string password, string ReturnUrl)
         {
             try
             {
@@ -24,9 +27,22 @@ namespace AspNetCoreWebApplication.Areas.Admin.Controllers
                 if (kullanici != null)
                 {
                     //giriş yapacak
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Email, email)
+                    };
+                    var userIdentity = new ClaimsIdentity(claims, "Login");
+                    ClaimsPrincipal principal = new ClaimsPrincipal(userIdentity);
+                    await HttpContext.SignInAsync(principal);//async ile biten metotlar asenkron metotlardır ve bu metotları çalıştırmak için await anahtar kelimesi ilgili satırın başına eklenmelidir
+                    if (!string.IsNullOrWhiteSpace(ReturnUrl))
+                    {
+                        return Redirect(ReturnUrl);
+                    }
+                    else return Redirect("/Admin");
                 }
                 else
                 {
+                    ModelState.AddModelError("", "Email veya Şifre Hatalı!");
                     TempData["Mesaj"] = "Giriş Başarısız!";
                 }
             }
@@ -36,5 +52,12 @@ namespace AspNetCoreWebApplication.Areas.Admin.Controllers
             }
             return View();
         }
+
+        public async Task<IActionResult> LogoutAsync()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index");
+        }
+
     }
 }
