@@ -19,6 +19,8 @@ namespace Entites
         public string Password { get; set; }
         [Display(Name = "Durum")]
         public bool IsActive { get; set; }
+        [Display(Name = "Admin?")]
+        public bool IsAdmin { get; set; }
         [Display(Name = "Eklenme Tarihi"), ScaffoldColumn(false)]//ScaffoldColumn kodu, otomatik sayfa oluşturma işleminde bu alan için crud kodu üretmemesini sağlar 
         public System.DateTime CreateDate { get; set; }
     }

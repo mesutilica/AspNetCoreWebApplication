@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Entites
 {
@@ -13,5 +14,6 @@ namespace Entites
         public string Description { get; set; }
         [Display(Name = "Kategori Resmi")]
         public string Image { get; set; }
+        public virtual List<Post> Posts { get; set; }
     }
 }

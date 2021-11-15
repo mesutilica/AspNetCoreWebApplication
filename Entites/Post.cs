@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Entites
 {
@@ -7,14 +8,14 @@ namespace Entites
         public int Id { get; set; }
         [Display(Name = "İçerik Adı"), Required, StringLength(50)]
         public string Name { get; set; }
-        [Display(Name = "İçerik Açıklaması"), DataType(DataType.Html)]
+        [Display(Name = "İçerik Açıklaması"), DataType(DataType.MultilineText)]
         public string Description { get; set; }
         [Display(Name = "İçerik Resmi")]
         public string Image { get; set; }
         [Display(Name = "İçerik Tarihi"), ScaffoldColumn(false)]
         public System.DateTime CreateDate { get; set; }
-        public int CategoryId { get; set; }
+        //public int CategoryId { get; set; }
         [Display(Name = "Kategorisi")]
-        public virtual Category Category { get; set; }
+        public virtual List<Category> Categories { get; set; }
     }
 }

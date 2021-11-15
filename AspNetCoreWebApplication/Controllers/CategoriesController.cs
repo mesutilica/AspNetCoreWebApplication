@@ -28,7 +28,8 @@ namespace AspNetCoreWebApplication.Controllers
             else
             {
                 ViewBag.KategoriAdi = _categoryService.Find(id.Value).Name;//categoryManager
-                return View(_postService.GetAll(x => x.CategoryId == id));//postManager
+                //return View(_postService.GetAll(x => x.CategoryId == id));//postManager
+                return View();
             }
         }
     }

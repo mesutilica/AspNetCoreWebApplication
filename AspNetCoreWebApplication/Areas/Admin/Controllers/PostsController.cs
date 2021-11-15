@@ -9,6 +9,7 @@ using Entites;
 using Microsoft.AspNetCore.Http;
 using AspNetCoreWebApplication.Utils;
 using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 
 namespace AspNetCoreWebApplication.Areas.Admin.Controllers
 {
@@ -25,7 +26,7 @@ namespace AspNetCoreWebApplication.Areas.Admin.Controllers
         // GET: Admin/Posts
         public async Task<IActionResult> Index()
         {
-            var databaseContext = _context.Posts.Include(p => p.Category);
+            var databaseContext = _context.Posts.Include(p => p.Categories);
             return View(await databaseContext.ToListAsync());
         }
 
@@ -38,7 +39,7 @@ namespace AspNetCoreWebApplication.Areas.Admin.Controllers
             }
 
             var post = await _context.Posts
-                .Include(p => p.Category)
+                .Include(p => p.Categories)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
@@ -51,23 +52,29 @@ namespace AspNetCoreWebApplication.Areas.Admin.Controllers
         // GET: Admin/Posts/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewBag.Categories = _context.Categories.ToList();
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Post post, IFormFile Image)
+        public async Task<IActionResult> Create(Post post, IFormFile Image, int[] categoryIds)
         {
             if (ModelState.IsValid)
             {
                 post.CreateDate = DateTime.Now;
                 post.Image = FileHelper.FileLoader(Image);
+                post.Categories = new List<Category>();
+                foreach (var id in categoryIds)
+                {
+                    post.Categories.Add(_context.Categories.FirstOrDefault(i => i.Id == id));
+                }
                 _context.Add(post);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", post.CategoryId);
+            //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", post.CategoryId);
             return View(post);
         }
 
@@ -79,18 +86,19 @@ namespace AspNetCoreWebApplication.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var post = await _context.Posts.FindAsync(id);
+            var post = await _context.Posts.Include(x => x.Categories).FirstOrDefaultAsync(x => x.Id == id);//FindAsync(id);
             if (post == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", post.CategoryId);
+            ViewBag.Categories = _context.Categories.ToList();
+            //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", post.CategoryId);
             return View(post);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Post post, IFormFile Image, bool cbResmiSil)
+        public async Task<IActionResult> Edit(int id, Post post, IFormFile Image, bool cbResmiSil, int[] categoryIds)
         {
             if (id != post.Id)
             {
@@ -101,6 +109,8 @@ namespace AspNetCoreWebApplication.Areas.Admin.Controllers
             {
                 try
                 {
+                    var entity = _context.Posts.Include(x => x.Categories).FirstOrDefault(m => m.Id == id);
+
                     if (cbResmiSil)
                     {
                         FileHelper.FileTerminator(post.Image);
@@ -108,7 +118,13 @@ namespace AspNetCoreWebApplication.Areas.Admin.Controllers
                     }
                     if (Image != null)
                         post.Image = FileHelper.FileLoader(Image);
-                    _context.Update(post);
+                    entity.Name = post.Name;
+                    entity.Description = post.Description;
+                    entity.Image = post.Image;
+                    entity.Categories = categoryIds.Select(id => _context.Categories.FirstOrDefault(i => i.Id == id)).ToList();
+                    _context.Update(entity);
+                    //_context.Update(post);
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -124,7 +140,7 @@ namespace AspNetCoreWebApplication.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", post.CategoryId);
+            //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", post.CategoryId);
             return View(post);
         }
 
@@ -137,7 +153,7 @@ namespace AspNetCoreWebApplication.Areas.Admin.Controllers
             }
 
             var post = await _context.Posts
-                .Include(p => p.Category)
+                .Include(p => p.Categories)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {

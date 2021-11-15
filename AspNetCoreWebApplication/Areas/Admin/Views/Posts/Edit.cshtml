@@ -30,10 +30,26 @@
                 <div>@Html.CheckBox("cbResmiSil") Resmi Sil</div>
             </div>
             <div class="form-group">
-                <label asp-for="CategoryId" class="control-label">Kategori</label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                @foreach (var item in (List<Category>)ViewBag.Categories)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="categoryIds"
+                               value="@item.Id"
+                               id="genre_@(item.Id)" @(Model.Categories.Any(i => i.Id == item.Id) ? "checked" : "")>
+                        <label class="form-check-label" for="genre_@(item.Id)">
+                            @item.Name
+                        </label>
+                    </div>
+
+                }
             </div>
+            @*<div class="form-group">
+            <label asp-for="CategoryId" class="control-label">Kategori</label>
+            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>*@
             <div class="form-group">
                 <input type="submit" value="Kaydet" class="btn btn-primary" />
             </div>
