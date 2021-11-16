@@ -1,6 +1,8 @@
 ﻿using BL;
 using Entites;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace AspNetCoreWebApplication.Controllers
 {
@@ -27,9 +29,11 @@ namespace AspNetCoreWebApplication.Controllers
             }
             else
             {
+                var posts = _postService.GetAllAsQueryable();
+                posts = posts.Include(p => p.Categories).Where(p => p.Categories.Any(c => c.Id == id));
                 ViewBag.KategoriAdi = _categoryService.Find(id.Value).Name;//categoryManager
                 //return View(_postService.GetAll(x => x.CategoryId == id));//postManager
-                return View();
+                return View(posts.ToList());
             }
         }
     }

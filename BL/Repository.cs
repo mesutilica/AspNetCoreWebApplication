@@ -50,6 +50,11 @@ namespace BL
             return _objectSet.Where(expression).ToList();
         }
 
+        public IQueryable<T> GetAllAsQueryable()
+        {
+            return _objectSet.AsQueryable();
+        }
+
         public async Task<IEnumerable<T>> GetAllByAsync()
         {
             return await _objectSet.ToListAsync();
